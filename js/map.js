@@ -51,6 +51,7 @@ let oneFootprint;
 let oneQucklook;
 let quicklookForMouse;
 let lastSliderQucklook;
+let lastSliderQucklookLatLong;
 
 footprintGroupLayer.addTo(map);
 QuicklookGroupLayer.addTo(map);
@@ -131,12 +132,30 @@ map.on('draw:created', function (e) {
 });
 
 function addSelectedLayer(){
-    if(!lastSliderQucklook){
-        console.log('not exist')
-    }else{
-        console.log("where will be selected layer",lastSliderQucklook)
-    }
+
+    console.log('')
+    // lastSliderQucklook.addTo(map);
+    
+
+     const oneSelectedLayer = L.polygon(lastSliderQucklookLatLong, {
+        color: '#ff0019ff', // Цвет границы
+        fillColor: '#0000', // Цвет заливки
+        fillOpacity: 0.5, // Прозрачность заливки
+        weight: 4 // Толщина границы
+    }).addTo(map)
+
+    selectedFootpringGroupLayer.addLayer(oneSelectedLayer);
+    // if(!lastSliderQucklook){
+    //     console.log('not exist')
+    // }else{
+    //     lastSliderQucklook.addTo(map)
+    //     selectedFootpringGroupLayer.addLayer()
+    //     console.log("where will be selected layer",lastSliderQucklook)
+    // }
    
+
+
+
 }
 
 
@@ -254,14 +273,20 @@ function createOneFootprint(topLeft, topRight, bottomLeft) {
     ];
 
     // Создание прямоугольного полигона и добавление его на карту
+
     oneFootprint = L.polygon(latlngs, {
         color: '#00FF00', // Цвет границы
         fillColor: '#0000', // Цвет заливки
         fillOpacity: 0.5, // Прозрачность заливки
         weight: 4 // Толщина границы
-    }).addTo(map);
+    })
+   
+    lastSliderQucklookLatLong = [...latlngs]
+    console.log(lastSliderQucklookLatLong,'latlong')
+    //  coordinateToSelectLayer=latlngs;
+   
+    const addedOneFootprint = oneFootprint.addTo(map);
     console.log(oneFootprint,'this is map Footprined after adding');
-    lastSliderQucklook = oneFootprint;
 
 }
 
