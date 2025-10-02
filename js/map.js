@@ -132,8 +132,10 @@ map.on('draw:created', function (e) {
 });
 
 function addSelectedLayer(){
-
-    console.log('')
+        const inputSatelliteId = document.getElementById('inputSatelliteId').value
+        const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
+        const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
+    console.log(inputSatelliteId,inputFirstLineNum,inputCntLineAfterFirst)
     // lastSliderQucklook.addTo(map);
     
 
