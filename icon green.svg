@@ -1,0 +1,6 @@
+<svg width="100" height="500" viewBox="0 0 100 500" xmlns="http://www.w3.org/2000/svg" >
+  <!-- Прямоугольник с контуром -->
+  <rect x="0" y="0"  width="100" height="500" fill="none" stroke="LimeGreen" stroke-width="20"  />
+
+  <!-- Здесь можно добавить другие элементы и содержимое SVG -->
+</svg>

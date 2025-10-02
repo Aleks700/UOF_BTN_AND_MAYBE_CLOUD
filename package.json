@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "leaflet-kml": "^1.0.1"
+  }
+}

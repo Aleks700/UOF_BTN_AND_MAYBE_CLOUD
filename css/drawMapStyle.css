@@ -1,0 +1,15 @@
+.leaflet-draw-draw-rectangle {
+    position: relative;
+}
+
+.leaflet-draw-draw-rectangle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px; /* Увеличенная ширина квадрата */
+    height: 10px; /* Увеличенная высота квадрата */
+    background-color: black; /* Черный цвет квадрата */
+    border-radius: 2px; /* Закругление углов */
+}
