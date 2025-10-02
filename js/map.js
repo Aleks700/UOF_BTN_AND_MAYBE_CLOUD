@@ -135,6 +135,8 @@ function addSelectedLayer(){
         const inputSatelliteId = document.getElementById('inputSatelliteId').value
         const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
         const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
+
+        const imageIdWithLines = `${inputSatelliteId}_${inputFirstLineNum}_${inputCntLineAfterFirst}`
     console.log(inputSatelliteId,inputFirstLineNum,inputCntLineAfterFirst)
     // lastSliderQucklook.addTo(map);
     
@@ -144,8 +146,11 @@ function addSelectedLayer(){
         fillColor: '#0000', // Цвет заливки
         fillOpacity: 0.5, // Прозрачность заливки
         weight: 4 // Толщина границы
-    }).addTo(map)
-
+    }).addTo(map);
+    oneSelectedLayer.bindPopup(
+        imageIdWithLines,
+        {permanent: false, direction:'top',maxWidth:600}
+    );
     selectedFootpringGroupLayer.addLayer(oneSelectedLayer);
     // if(!lastSliderQucklook){
     //     console.log('not exist')
