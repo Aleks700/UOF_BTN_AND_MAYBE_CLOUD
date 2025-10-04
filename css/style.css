@@ -425,4 +425,10 @@ footer {
 footer p {
   margin: 0;
   display: inline;
+}
+footer .selected-sidebar {
+  position: fixed;
+  left: 0;
+  min-width: 10rem;
+  background-color: red;
 }/*# sourceMappingURL=style.css.map */

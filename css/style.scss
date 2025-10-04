@@ -444,5 +444,12 @@ input[type="checkbox"] {
         margin: 0;
         display: inline;
     }
+
+	.selected-sidebar{
+		position: fixed;
+		left: 0;
+		min-width: 10rem ;
+		background-color: red;
+	}
 }
 

@@ -4,6 +4,8 @@ import SatelliteImage from "./models/SatelliteImage.js"
 import { clickAction, map } from "./main.js";
 
 // Создание карты с использованием CartoDB
+const layersById = {}; // словарь для хранения слоёв
+const layersVisibility = {}; // состояние видимости
 
 export function initMap() {
     const map = L.map('map', {
@@ -127,21 +129,25 @@ map.on('draw:created', function (e) {
     const angle = parseInt(document.getElementById('angle').value); // для целого числа
     const isNightImage = document.getElementById('night_image').checked;
     const option = new SearchOption(inputStartDate, inputEndDate, west, east, south, north, selectedSatellites, angle, isNightImage);
-    
+
     searchCatalog(option)
 });
 
-function addSelectedLayer(){
-        const inputSatelliteId = document.getElementById('inputSatelliteId').value
-        const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
-        const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
+function addSelectedLayer() {
+    const inputSatelliteId = document.getElementById('inputSatelliteId').value
+    const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
+    const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
 
-        const imageIdWithLines = `${inputSatelliteId}_${inputFirstLineNum}_${inputCntLineAfterFirst}`
-    console.log(inputSatelliteId,inputFirstLineNum,inputCntLineAfterFirst)
+    const imageIdWithLines = `${inputSatelliteId}_${inputFirstLineNum}_${inputCntLineAfterFirst}`
+    console.log(inputSatelliteId, inputFirstLineNum, inputCntLineAfterFirst)
     // lastSliderQucklook.addTo(map);
-    
 
-     const oneSelectedLayer = L.polygon(lastSliderQucklookLatLong, {
+    if (layersById[imageIdWithLines]) {
+        console.log("Слой уже существует:", imageIdWithLines);
+        return; // можно тут return, или, например, пересоздать слой
+    }
+
+    const oneSelectedLayer = L.polygon(lastSliderQucklookLatLong, {
         color: '#ff0019ff', // Цвет границы
         fillColor: '#0000', // Цвет заливки
         fillOpacity: 0.5, // Прозрачность заливки
@@ -149,94 +155,149 @@ function addSelectedLayer(){
     }).addTo(map);
     oneSelectedLayer.bindPopup(
         imageIdWithLines,
-        {permanent: false, direction:'top',maxWidth:600}
+        { permanent: false, direction: 'top', maxWidth: 600 }
     );
+
+
+    layersById[imageIdWithLines] = oneSelectedLayer;
+    layersVisibility[imageIdWithLines] = true;
+
+
+    // oneSelectedLayer.customId = imageIdWithLines;
+
     selectedFootpringGroupLayer.addLayer(oneSelectedLayer);
-    // if(!lastSliderQucklook){
-    //     console.log('not exist')
-    // }else{
-    //     lastSliderQucklook.addTo(map)
-    //     selectedFootpringGroupLayer.addLayer()
-    //     console.log("where will be selected layer",lastSliderQucklook)
-    // }
-   
+
+
+}
+
+
+function removeLayerById(id) {
+    if (layersById[id]) {
+        selectedFootpringGroupLayer.removeLayer(layersById[id]);
+        delete layersById[id];
+        delete layersVisibility[id];
+    }
+}
+
+function toggleLayerById(id) {
+    if (!layersById[id]) return;
+
+    if (layersVisibility[id]) {
+        // выключить
+        selectedFootpringGroupLayer.removeLayer(layersById[id]);
+        layersVisibility[id] = false;
+    } else {
+        // включить
+        selectedFootpringGroupLayer.addLayer(layersById[id]);
+        layersVisibility[id] = true;
+    }
+}
+
+
+function removeAllLayers() {
+    selectedFootpringGroupLayer.clearLayers();
+    for (let id in layersById) {
+        delete layersById[id];
+        delete layersVisibility[id];
+    }
+}
 
 
 
+function toggleAllLayers() {
+    let anyVisible = Object.values(layersVisibility).some(v => v === true);
+
+    if (anyVisible) {
+        // если хоть один включён → выключаем все
+        for (let id in layersById) {
+            if (layersVisibility[id]) {
+                selectedFootpringGroupLayer.removeLayer(layersById[id]);
+                layersVisibility[id] = false;
+            }
+        }
+    } else {
+        // если все выключены → включаем все
+        for (let id in layersById) {
+            if (!layersVisibility[id]) {
+                selectedFootpringGroupLayer.addLayer(layersById[id]);
+                layersVisibility[id] = true;
+            }
+        }
+    }
 }
 
 
 function createFootprintGroup(imageDataArray) {
     imageDataArray.forEach(imageData => {
         if (!footprintLayers.hasOwnProperty(imageData.Code)) {
-            
-        var latlngs = [
-            imageData.getCoordinatesForFootprint().topLeft,
-            imageData.getCoordinatesForFootprint().topRight,
-            imageData.getCoordinatesForFootprint().bottomRight,
-            imageData.getCoordinatesForFootprint().bottomLeft
-        ];
 
-        const footprintGroup = L.polygon(latlngs, {
-            color: 'lightcoral', // Цвет границы //darkslate
-            fillColor: '#0000', // Цвет заливки (прозрачный)
-            fillOpacity: 0, // Прозрачность заливки
-            weight: 3 // Толщина границы
-        });
-        // Пример добавления всплывающего окна с названием изображения
-        footprintGroup.bindPopup(imageData.Code);
-     
-        footprintGroup.on('click', () => {
-            document.querySelectorAll('#dataTable tr').forEach(row => {
-                row.style.backgroundColor = ''; // Сброс цвета фона
+            var latlngs = [
+                imageData.getCoordinatesForFootprint().topLeft,
+                imageData.getCoordinatesForFootprint().topRight,
+                imageData.getCoordinatesForFootprint().bottomRight,
+                imageData.getCoordinatesForFootprint().bottomLeft
+            ];
+
+            const footprintGroup = L.polygon(latlngs, {
+                color: 'lightcoral', // Цвет границы //darkslate
+                fillColor: '#0000', // Цвет заливки (прозрачный)
+                fillOpacity: 0, // Прозрачность заливки
+                weight: 3 // Толщина границы
             });
-           
-            // Выделяем соответствующую строку
-            const relatedRow = document.getElementById(`row-${imageData.Code}`);
-            if (relatedRow) {
-                relatedRow.style.backgroundColor = '#ADD8E6'; // Светло-голубой цвет фона для выделения
-                relatedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            toggleVisibility(imageData);
-        });
+            // Пример добавления всплывающего окна с названием изображения
+            footprintGroup.bindPopup(imageData.Code);
 
-        footprintGroup.on('dblclick', () => {
-            
-            clickAction(imageData);
-        });
-        footprintGroup.on('mouseover', function(e) {
-            e.target.setStyle({
-                color: 'blue', // исходный цвет границы
-                fillColor: '#0000', // исходный цвет заливки (прозрачный)
-                fillOpacity: 0 // исходная прозрачность заливки
+            footprintGroup.on('click', () => {
+                document.querySelectorAll('#dataTable tr').forEach(row => {
+                    row.style.backgroundColor = ''; // Сброс цвета фона
+                });
+
+                // Выделяем соответствующую строку
+                const relatedRow = document.getElementById(`row-${imageData.Code}`);
+                if (relatedRow) {
+                    relatedRow.style.backgroundColor = '#ADD8E6'; // Светло-голубой цвет фона для выделения
+                    relatedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                toggleVisibility(imageData);
             });
 
+            footprintGroup.on('dblclick', () => {
 
-            // document.querySelectorAll('#dataTable tr').forEach(row => {
-            //     row.style.backgroundColor = ''; // Сброс цвета фона
-            // });
-           
-            // // Выделяем соответствующую строку
-            // const relatedRow = document.getElementById(`row-${imageData.Code}`);
-            // if (relatedRow) {
-            //     relatedRow.style.backgroundColor = '#ADD8E6'; // Светло-голубой цвет фона для выделения
-            //     relatedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // }
-           createQuicklookForMouse(imageData);
-        });
-        footprintGroup.on('mouseout',  function(e) {
-            e.target.setStyle({
-                color: 'lightcoral', // исходный цвет границы
-                fillColor: '#0000', // исходный цвет заливки (прозрачный)
-                fillOpacity: 0 // исходная прозрачность заливки
+                clickAction(imageData);
             });
-            removeOneLayerFromMap(quicklookForMouse);
-        });
+            footprintGroup.on('mouseover', function (e) {
+                e.target.setStyle({
+                    color: 'blue', // исходный цвет границы
+                    fillColor: '#0000', // исходный цвет заливки (прозрачный)
+                    fillOpacity: 0 // исходная прозрачность заливки
+                });
 
-        // Добавление слоя footprintGroup в общий слой footprintGroupLayer
-        footprintGroupLayer.addLayer(footprintGroup);
-        footprintLayers[imageData.Code] = footprintGroup;
-        } 
+
+                // document.querySelectorAll('#dataTable tr').forEach(row => {
+                //     row.style.backgroundColor = ''; // Сброс цвета фона
+                // });
+
+                // // Выделяем соответствующую строку
+                // const relatedRow = document.getElementById(`row-${imageData.Code}`);
+                // if (relatedRow) {
+                //     relatedRow.style.backgroundColor = '#ADD8E6'; // Светло-голубой цвет фона для выделения
+                //     relatedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // }
+                createQuicklookForMouse(imageData);
+            });
+            footprintGroup.on('mouseout', function (e) {
+                e.target.setStyle({
+                    color: 'lightcoral', // исходный цвет границы
+                    fillColor: '#0000', // исходный цвет заливки (прозрачный)
+                    fillOpacity: 0 // исходная прозрачность заливки
+                });
+                removeOneLayerFromMap(quicklookForMouse);
+            });
+
+            // Добавление слоя footprintGroup в общий слой footprintGroupLayer
+            footprintGroupLayer.addLayer(footprintGroup);
+            footprintLayers[imageData.Code] = footprintGroup;
+        }
 
 
     });
@@ -287,13 +348,13 @@ function createOneFootprint(topLeft, topRight, bottomLeft) {
         fillOpacity: 0.5, // Прозрачность заливки
         weight: 4 // Толщина границы
     })
-   
+
     lastSliderQucklookLatLong = [...latlngs]
-    console.log(lastSliderQucklookLatLong,'latlong')
+    console.log(lastSliderQucklookLatLong, 'latlong')
     //  coordinateToSelectLayer=latlngs;
-   
+
     const addedOneFootprint = oneFootprint.addTo(map);
-    console.log(oneFootprint,'this is map Footprined after adding');
+    console.log(oneFootprint, 'this is map Footprined after adding');
 
 }
 
@@ -322,7 +383,7 @@ function createQuicklookForMouse(oneImage) {
     //     opacity: 1,
     //     interactive: true,
     // });
-   
+
     quicklookForMouse.addTo(map);
 }
 
@@ -330,7 +391,7 @@ function createQuicklookForMouse(oneImage) {
 function createQuicklookGroup(imagesDataArray) {
     imagesDataArray.forEach(imageData => {
         const coordinates = imageData.getCoordinatesForFootprint();
-      
+
         // const QuicklookGroup = L.imageOverlay.rotated(imageData.Quicklook, coordinates.bottomRight, coordinates.topRight, coordinates.bottomLeft, {
         //     opacity: 1,
         //     interactive: true,
@@ -339,7 +400,7 @@ function createQuicklookGroup(imagesDataArray) {
             opacity: 1,
             interactive: true,
         });
-       
+
         // Пример добавления всплывающего окна с названием изображения
         QuicklookGroup.bindPopup(imageData.Code);
         QuicklookGroup.on('click', () => {
@@ -413,8 +474,8 @@ function zoomToImage(image) {
 }
 
 function toggleVisibility(image) {
-   
-   
+
+
     // Если объект уже выключен и пытаемся снова выключить, не делаем ничего
     if (image.IsVisibleOnMap) return;
     // Переключаем состояние видимости только если объект включен
@@ -425,19 +486,19 @@ function toggleVisibility(image) {
     // Обновляем класс иконки в зависимости от нового состояния видимости
     if (visibilityIcon) {
         visibilityIcon.className = image.IsVisibleOnMap ? 'fas fa-eye' : 'fas fa-eye-slash';
-        
+
         if (image.IsVisibleOnMap) {
             // Показываем объект на карте
             createQuicklookGroup([image]);
-        } 
+        }
     } else {
         console.error('Icon not found for', image.Code);
     }
 }
 
 // function hideVisibility(image) {
-   
-   
+
+
 //     // Если объект уже выключен и пытаемся снова выключить, не делаем ничего
 //     if (!image.IsVisibleOnMap) return;
 //     // Переключаем состояние видимости только если объект включен
@@ -448,7 +509,7 @@ function toggleVisibility(image) {
 //     // Обновляем класс иконки в зависимости от нового состояния видимости
 //     if (visibilityIcon) {
 //         visibilityIcon.className = image.IsVisibleOnMap ? 'fas fa-eye' : 'fas fa-eye-slash';
-        
+
 //         if (image.IsVisibleOnMap) {
 //             // Показываем объект на карте
 //             removeFromQuicklookGroupLayer(image.Code);
@@ -460,7 +521,7 @@ function toggleVisibility(image) {
 
 export {
     footprintLayers, quicklookLayers, removeLayerFromMap, removeOneLayerFromMap, createFootprintGroup, removeFromFootprintGroupLayer,
-    createQuicklookGroup, removeFromQuicklookGroupLayer, oneFootprint, oneQucklook, createOneFootprint, createOneQuicklook, zoomToImage,addSelectedLayer, footprintGroupLayer, QuicklookGroupLayer
+    createQuicklookGroup, removeFromQuicklookGroupLayer, oneFootprint, oneQucklook, createOneFootprint, createOneQuicklook, zoomToImage, addSelectedLayer, footprintGroupLayer, QuicklookGroupLayer
 };
 // Использование функции
 
