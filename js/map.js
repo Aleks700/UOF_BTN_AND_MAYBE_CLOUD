@@ -175,15 +175,20 @@ function addSelectedLayer() {
     const paragraf = document.createElement('p')
     const visualButton = document.createElement('button')
     const removeButton = document.createElement('button')
-    visualButton.textContent = '-'
-    removeButton.textContent = '@'
+    visualButton.textContent = '@'
+    removeButton.textContent = '-'
     
     paragraf.textContent =  `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
     newLi.appendChild(visualButton)
     newLi.appendChild(removeButton)
     newLi.appendChild(paragraf)
+
+    removeButton.addEventListener('click',()=>{
+        newLi.remove();
+        removeLayerById(imageIdWithLines)
+    })
     
-    selectedSidebar.appendChild( newLi)
+    selectedSidebar.appendChild(newLi)
 
 
 }
