@@ -7,6 +7,18 @@ import { clickAction, map } from "./main.js";
 const layersById = {}; // словарь для хранения слоёв
 const layersVisibility = {}; // состояние видимости
 const selectedSidebar = document.getElementById('selected-sidebar')
+const btnRemoveAll = document.getElementById('remove_all')
+const btnToogleSidebar = document.getElementById('toogle_all')
+
+
+btnRemoveAll.addEventListener('click',()=>{
+removeAllLayers()
+})
+
+btnToogleSidebar.addEventListener('click',()=>{
+toggleAllLayers()
+})
+
 
 export function initMap() {
     const map = L.map('map', {
@@ -134,6 +146,9 @@ map.on('draw:created', function (e) {
     searchCatalog(option)
 });
 
+
+
+
 function addSelectedLayer() {
     console.log(selectedSidebar,'this selected')
    
@@ -186,6 +201,10 @@ function addSelectedLayer() {
     removeButton.addEventListener('click',()=>{
         newLi.remove();
         removeLayerById(imageIdWithLines)
+    })
+
+    visualButton.addEventListener('click',  ()=>{
+        toggleLayerById(imageIdWithLines)
     })
     
     selectedSidebar.appendChild(newLi)
