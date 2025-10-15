@@ -6,6 +6,7 @@ import { clickAction, map } from "./main.js";
 // Создание карты с использованием CartoDB
 const layersById = {}; // словарь для хранения слоёв
 const layersVisibility = {}; // состояние видимости
+const selectedSidebar = document.getElementById('selected-sidebar')
 
 export function initMap() {
     const map = L.map('map', {
@@ -134,6 +135,8 @@ map.on('draw:created', function (e) {
 });
 
 function addSelectedLayer() {
+    console.log(selectedSidebar,'this selected')
+   
     const inputSatelliteId = document.getElementById('inputSatelliteId').value
     const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
     const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
@@ -166,6 +169,21 @@ function addSelectedLayer() {
     // oneSelectedLayer.customId = imageIdWithLines;
 
     selectedFootpringGroupLayer.addLayer(oneSelectedLayer);
+
+
+    const newLi = document.createElement('li')
+    const paragraf = document.createElement('p')
+    const visualButton = document.createElement('button')
+    const removeButton = document.createElement('button')
+    visualButton.textContent = '-'
+    removeButton.textContent = '@'
+    
+    paragraf.textContent =  `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
+    newLi.appendChild(visualButton)
+    newLi.appendChild(removeButton)
+    newLi.appendChild(paragraf)
+    
+    selectedSidebar.appendChild( newLi)
 
 
 }

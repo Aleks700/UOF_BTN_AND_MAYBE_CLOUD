@@ -446,8 +446,9 @@ input[type="checkbox"] {
     }
 
 	.selected-sidebar{
-		position: fixed;
-		left: 0;
+		max-width: 20vw;
+		// position: fixed;
+		// left: 0;
 		min-width: 10rem ;
 		background-color: red;
 	}
