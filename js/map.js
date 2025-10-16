@@ -11,7 +11,9 @@ const selectedSidebar = document.getElementById('selected-sidebar')
 const btnRemoveAll = document.getElementById('remove_all')
 const btnToogleSidebar = document.getElementById('toogle_all')
 const btnDownloadLines = document.getElementById('downloadLines')
+const btnSaveSelectedShape = document.getElementById('saveShapeLines')
 const selectedLayersList = document.getElementById('selected-layers-list')
+
 
 btnRemoveAll.addEventListener('click', () => {
     removeAllLayers()
@@ -23,6 +25,10 @@ btnToogleSidebar.addEventListener('click', () => {
 
 btnDownloadLines.addEventListener('click',()=>{
     donwloadSelectedLines()
+})
+
+btnSaveSelectedShape.addEventListener('click',()=>{
+    downloadSelectedShape()
 })
 
 
@@ -197,7 +203,7 @@ function addSelectedLayer() {
     const visualButton = document.createElement('button')
     const removeButton = document.createElement('button')
     visualButton.innerHTML = '<i class="fas fa-eye"></i>'
-    removeButton.innerHTML = '<i class="fas fa-times"></i> '
+    removeButton.innerHTML = '<i class="fas fa-times"></i>'
 
     paragraf.textContent = `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
 
@@ -248,6 +254,40 @@ function donwloadSelectedLines(){
 
       // Очищаем ссылку из памяти
       URL.revokeObjectURL(link.href);
+}
+
+function downloadSelectedShape(){
+    const features = [];
+
+    // Проходим по всем свойствам объекта
+    for (const [name, layer] of Object.entries(layersById)) {
+      try {
+        // Leaflet умеет сам конвертировать в GeoJSON
+        const geo = layer.toGeoJSON();
+        geo.properties = { name }; // добавляем имя как атрибут
+        features.push(geo);
+      } catch (err) {
+        console.warn("Не удалось экспортировать слой:", name, err);
+      }
+    }
+
+    // Собираем FeatureCollection
+    const geojson = {
+      type: "FeatureCollection",
+      features
+    };
+
+    // Формируем файл
+    const blob = new Blob(
+      [JSON.stringify(geojson, null, 2)],
+      { type: "application/geo+json" }
+    );
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "shapes.geojson";
+    link.click();
+    URL.revokeObjectURL(link.href);
 }
 
 function removeLayerById(id) {
