@@ -162,7 +162,7 @@ function addSelectedLayer() {
     const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
     const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
 
-    const imageIdWithLines = `${inputSatelliteId}_${inputFirstLineNum}_${inputCntLineAfterFirst}`
+    const imageIdWithLines = `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
     console.log(inputSatelliteId, inputFirstLineNum, inputCntLineAfterFirst)
     // lastSliderQucklook.addTo(map);
 
@@ -223,16 +223,19 @@ function addSelectedLayer() {
 }
 function donwloadSelectedLines(){
     console.log(layersById)
+     const key_names = Object.keys(layersById).map((i)=>i.replaceAll('__',' ')) 
+
+
      // Текст, который будет в файле (по строкам)
-      const lines = [
-        "Первая строка",
-        "Вторая строка",
-        "Третья строка",
-        "Четвёртая строка"
-      ];
+    //   const lines = [
+    //     "Первая строка",
+    //     "Вторая строка",
+    //     "Третья строка",
+    //     "Четвёртая строка"
+    //   ];
 
       // Соединяем строки с переносом
-      const textContent = lines.join("\n");
+      const textContent = key_names.join("\n");
 
       // Создаём Blob (объект файла)
       const blob = new Blob([textContent], { type: "text/plain" });
