@@ -27,13 +27,7 @@ inputCntLineAfterFirst.addEventListener('click', function () {
     endLine(enteredValue);
 });
 
-function copyText() {
-    var tempInput = document.createElement('textarea'); // Используем textarea для поддержки многострочного текста
-    var inputSatelliteId = document.getElementById('inputSatelliteId');
-    var inputFirstLineNum = document.getElementById('inputFirstLineNum');
-    var inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst');
-
-    function generateValueToCopy(satelliteId, firstLineNum, cntLineAfterFirst) {
+  function generateValueToCopy(satelliteId, firstLineNum, cntLineAfterFirst) {
         var lines = '';
         var startLineNum = parseInt(firstLineNum);
         var remainingLines = cntLineAfterFirst;
@@ -57,6 +51,13 @@ function copyText() {
 
         return lines;
     }
+function copyText() {
+    var tempInput = document.createElement('textarea'); // Используем textarea для поддержки многострочного текста
+    var inputSatelliteId = document.getElementById('inputSatelliteId');
+    var inputFirstLineNum = document.getElementById('inputFirstLineNum');
+    var inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst');
+
+  
 
     var valueToCopy = generateValueToCopy(inputSatelliteId.value, inputFirstLineNum.value, parseInt(inputCntLineAfterFirst.value));
 
@@ -405,4 +406,4 @@ document.getElementById('btnClear').addEventListener('click', function() {
 
 });
 
-export { fillTableWithSatelliteImages, inputFirstLineNum, inputLineMax, inputCntLineAfterFirst, kmlLayerGroup, clickAction };
+export { fillTableWithSatelliteImages, inputFirstLineNum, inputLineMax, inputCntLineAfterFirst, kmlLayerGroup, clickAction, generateValueToCopy };

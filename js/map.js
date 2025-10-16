@@ -5,18 +5,19 @@ import { clickAction, map } from "./main.js";
 
 // Создание карты с использованием CartoDB
 const layersById = {}; // словарь для хранения слоёв
+const layerLineToCopy = ''
 const layersVisibility = {}; // состояние видимости
 const selectedSidebar = document.getElementById('selected-sidebar')
 const btnRemoveAll = document.getElementById('remove_all')
 const btnToogleSidebar = document.getElementById('toogle_all')
+const selectedLayersList = document.getElementById('selected-layers-list')
 
-
-btnRemoveAll.addEventListener('click',()=>{
-removeAllLayers()
+btnRemoveAll.addEventListener('click', () => {
+    removeAllLayers()
 })
 
-btnToogleSidebar.addEventListener('click',()=>{
-toggleAllLayers()
+btnToogleSidebar.addEventListener('click', () => {
+    toggleAllLayers()
 })
 
 
@@ -150,8 +151,8 @@ map.on('draw:created', function (e) {
 
 
 function addSelectedLayer() {
-    console.log(selectedSidebar,'this selected')
-   
+    console.log(selectedSidebar, 'this selected')
+
     const inputSatelliteId = document.getElementById('inputSatelliteId').value
     const inputFirstLineNum = document.getElementById('inputFirstLineNum').value
     const inputCntLineAfterFirst = document.getElementById('inputCntLineAfterFirst').value
@@ -192,28 +193,33 @@ function addSelectedLayer() {
     const removeButton = document.createElement('button')
     visualButton.textContent = '@'
     removeButton.textContent = '-'
-    
-    paragraf.textContent =  `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
+
+    paragraf.textContent = `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
+
+
+
     newLi.appendChild(visualButton)
     newLi.appendChild(removeButton)
     newLi.appendChild(paragraf)
 
-    removeButton.addEventListener('click',()=>{
+    removeButton.addEventListener('click', () => {
+
         newLi.remove();
         removeLayerById(imageIdWithLines)
     })
 
-    visualButton.addEventListener('click',  ()=>{
+    visualButton.addEventListener('click', () => {
         toggleLayerById(imageIdWithLines)
     })
-    
-    selectedSidebar.appendChild(newLi)
+
+    selectedLayersList.appendChild(newLi)
 
 
 }
 
 
 function removeLayerById(id) {
+
     if (layersById[id]) {
         selectedFootpringGroupLayer.removeLayer(layersById[id]);
         delete layersById[id];
@@ -237,11 +243,16 @@ function toggleLayerById(id) {
 
 
 function removeAllLayers() {
-    selectedFootpringGroupLayer.clearLayers();
-    for (let id in layersById) {
-        delete layersById[id];
-        delete layersVisibility[id];
+    const isDeleteAgreement = confirm('Удалить все слои?')
+    if (isDeleteAgreement) {
+        selectedFootpringGroupLayer.clearLayers();
+        for (let id in layersById) {
+            delete layersById[id];
+            delete layersVisibility[id];
+        }
+        selectedLayersList.innerHTML = ''
     }
+
 }
 
 
@@ -340,10 +351,7 @@ function createFootprintGroup(imageDataArray) {
             footprintGroupLayer.addLayer(footprintGroup);
             footprintLayers[imageData.Code] = footprintGroup;
         }
-
-
     });
-
 }
 
 
@@ -390,7 +398,6 @@ function createOneFootprint(topLeft, topRight, bottomLeft) {
         fillOpacity: 0.5, // Прозрачность заливки
         weight: 4 // Толщина границы
     })
-
     lastSliderQucklookLatLong = [...latlngs]
     console.log(lastSliderQucklookLatLong, 'latlong')
     //  coordinateToSelectLayer=latlngs;
@@ -428,6 +435,11 @@ function createQuicklookForMouse(oneImage) {
 
     quicklookForMouse.addTo(map);
 }
+
+
+
+
+
 
 
 function createQuicklookGroup(imagesDataArray) {
