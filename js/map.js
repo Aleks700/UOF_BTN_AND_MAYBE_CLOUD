@@ -10,6 +10,7 @@ const layersVisibility = {}; // состояние видимости
 const selectedSidebar = document.getElementById('selected-sidebar')
 const btnRemoveAll = document.getElementById('remove_all')
 const btnToogleSidebar = document.getElementById('toogle_all')
+const btnDownloadLines = document.getElementById('downloadLines')
 const selectedLayersList = document.getElementById('selected-layers-list')
 
 btnRemoveAll.addEventListener('click', () => {
@@ -18,6 +19,10 @@ btnRemoveAll.addEventListener('click', () => {
 
 btnToogleSidebar.addEventListener('click', () => {
     toggleAllLayers()
+})
+
+btnDownloadLines.addEventListener('click',()=>{
+    donwloadSelectedLines()
 })
 
 
@@ -191,8 +196,8 @@ function addSelectedLayer() {
     const paragraf = document.createElement('p')
     const visualButton = document.createElement('button')
     const removeButton = document.createElement('button')
-    visualButton.textContent = '@'
-    removeButton.textContent = '-'
+    visualButton.innerHTML = '<i class="fas fa-eye"></i>'
+    removeButton.innerHTML = '<i class="fas fa-times"></i> '
 
     paragraf.textContent = `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
 
@@ -216,7 +221,31 @@ function addSelectedLayer() {
 
 
 }
+function donwloadSelectedLines(){
+    console.log(layersById)
+     // Текст, который будет в файле (по строкам)
+      const lines = [
+        "Первая строка",
+        "Вторая строка",
+        "Третья строка",
+        "Четвёртая строка"
+      ];
 
+      // Соединяем строки с переносом
+      const textContent = lines.join("\n");
+
+      // Создаём Blob (объект файла)
+      const blob = new Blob([textContent], { type: "text/plain" });
+
+      // Создаём ссылку для скачивания
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "example.txt"; // имя файла
+      link.click();
+
+      // Очищаем ссылку из памяти
+      URL.revokeObjectURL(link.href);
+}
 
 function removeLayerById(id) {
 
