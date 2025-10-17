@@ -1,7 +1,7 @@
 import { foundImage, imageDataArray, searchCatalog } from "./service/catalogService.js";
 import SearchOption from "./models/SearchOption.js"
 import SatelliteImage from "./models/SatelliteImage.js"
-import { clickAction, map } from "./main.js";
+import { clickAction, generateValueToCopy, map } from "./main.js";
 
 // Создание карты с использованием CartoDB
 const layersById = {}; // словарь для хранения слоёв
@@ -229,8 +229,22 @@ function addSelectedLayer() {
 }
 function donwloadSelectedLines(){
     console.log(layersById)
-     const key_names = Object.keys(layersById).map((i)=>i.replaceAll('__',' ')) 
-
+    
+     const sateliteWithLines = Object.keys(layersById).map((i)=>i.replaceAll('__',' '))
+     
+    //  const [satelliteId,firstLineNum,cntLineAfterFirst]=sateliteWithLines[0].split(' ')
+     
+    // const g =  generateValueToCopy(satelliteId,firstLineNum,cntLineAfterFirst)
+    // console.log(g,'test')
+     const newCuttedSateliteWithLines =  sateliteWithLines.map(i=>{
+        const  [satelliteId,firstLineNum,cntLineAfterFirst] = i.split(' ')
+        return generateValueToCopy(satelliteId,firstLineNum,cntLineAfterFirst)
+     }
+        
+    )
+    //  console.log(new_lines)
+    //  return
+// generateValueToCopy()
 
      // Текст, который будет в файле (по строкам)
     //   const lines = [
@@ -241,7 +255,7 @@ function donwloadSelectedLines(){
     //   ];
 
       // Соединяем строки с переносом
-      const textContent = key_names.join("\n");
+      const textContent = newCuttedSateliteWithLines.join("\n");
 
       // Создаём Blob (объект файла)
       const blob = new Blob([textContent], { type: "text/plain" });
