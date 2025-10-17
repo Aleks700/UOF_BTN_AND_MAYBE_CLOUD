@@ -255,7 +255,9 @@ function donwloadSelectedLines(){
     //   ];
 
       // Соединяем строки с переносом
-      const textContent = newCuttedSateliteWithLines.join("\n");
+
+
+      const textContent =  'Исходные линии\n'+ sateliteWithLines.join('\n')+ '\nЛинии для заказа\n'+newCuttedSateliteWithLines.join("\n");
 
       // Создаём Blob (объект файла)
       const blob = new Blob([textContent], { type: "text/plain" });
