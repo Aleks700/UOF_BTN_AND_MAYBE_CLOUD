@@ -454,3 +454,43 @@ input[type="checkbox"] {
 	}
 }
 
+.dataTable{
+	display: block;
+    border: 1px solid #ccc; // Граница вокруг всей таблицы
+	text-align: center;
+	max-height: 60vh;
+	overflow-y: auto;
+
+	th, td {
+		border: 1px solid #ccc; // Добавление границ для ячеек
+		padding: 10px;
+		text-align: center;
+		vertical-align: middle;
+	}
+
+	th {
+		&:not(:nth-child(3)) {
+			width: calc((25% - 20px) / 4);
+			padding-left: 5px;
+			padding-right: 5px;
+		}
+		&:nth-child(2) {
+			width: 20%;
+		}
+	}
+
+	tr {
+	    border-bottom: 1px solid #ccc; // Добавление границ между строками
+	}
+}
+.selected-control-panel{
+	// display: flex;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+.selected-sidebar{
+	background-color: whitesmoke;
+	border-right: 2px solid #C0C0C0;
+	padding: 1rem;font-size: 0.8rem;
+}

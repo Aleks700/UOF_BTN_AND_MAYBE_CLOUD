@@ -12,7 +12,7 @@ const btnRemoveAll = document.getElementById('remove_all')
 const btnToogleSidebar = document.getElementById('toogle_all')
 const btnDownloadLines = document.getElementById('downloadLines')
 const btnSaveSelectedShape = document.getElementById('saveShapeLines')
-const selectedLayersList = document.getElementById('selected-layers-list')
+const selectedLayersListTable = document.getElementById('selected-layers-list-table')
 
 
 btnRemoveAll.addEventListener('click', () => {
@@ -198,19 +198,23 @@ function addSelectedLayer() {
     selectedFootpringGroupLayer.addLayer(oneSelectedLayer);
 
 
-    const newLi = document.createElement('li')
-    const paragraf = document.createElement('p')
+    const newLi = document.createElement('tr')
+    const paragraf = document.createElement('td')
+     const visualButtonCell = document.createElement('td')
+      const removeButtonCell = document.createElement('td')
     const visualButton = document.createElement('button')
     const removeButton = document.createElement('button')
     visualButton.innerHTML = '<i class="fas fa-eye"></i>'
     removeButton.innerHTML = '<i class="fas fa-times"></i>'
+    visualButtonCell.append(visualButton)
+    removeButtonCell.append(removeButton)
 
     paragraf.textContent = `${inputSatelliteId}__${inputFirstLineNum}__${inputCntLineAfterFirst}`
 
 
 
-    newLi.appendChild(visualButton)
-    newLi.appendChild(removeButton)
+    newLi.appendChild(visualButtonCell)
+    newLi.appendChild(removeButtonCell)
     newLi.appendChild(paragraf)
 
     removeButton.addEventListener('click', () => {
@@ -223,7 +227,7 @@ function addSelectedLayer() {
         toggleLayerById(imageIdWithLines)
     })
 
-    selectedLayersList.appendChild(newLi)
+    selectedLayersListTable.appendChild(newLi)
 
 
 }
@@ -338,7 +342,7 @@ function removeAllLayers() {
             delete layersById[id];
             delete layersVisibility[id];
         }
-        selectedLayersList.innerHTML = ''
+        selectedLayersListTable.innerHTML = ''
     }
 
 }

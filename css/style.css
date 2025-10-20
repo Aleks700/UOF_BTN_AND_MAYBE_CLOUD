@@ -430,4 +430,41 @@ footer .selected-sidebar {
   max-width: 20vw;
   min-width: 10rem;
   background-color: red;
+}
+
+.dataTable {
+  display: block;
+  border: 1px solid #ccc;
+  text-align: center;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.dataTable th, .dataTable td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.dataTable th:not(:nth-child(3)) {
+  width: calc((25% - 20px) / 4);
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.dataTable th:nth-child(2) {
+  width: 20%;
+}
+.dataTable tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.selected-control-panel {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.selected-sidebar {
+  background-color: whitesmoke;
+  border-right: 2px solid #C0C0C0;
+  padding: 1rem;
+  font-size: 0.8rem;
 }/*# sourceMappingURL=style.css.map */
