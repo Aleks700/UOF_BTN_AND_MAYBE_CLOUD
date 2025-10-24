@@ -226,7 +226,11 @@ function createQuicklookCell(image) {
 function createTextCell(image, fontSize = '16px') {
     let cell = document.createElement('td');
     cell.style.fontSize = fontSize;
-    cell.appendChild(document.createTextNode(image.Code));
+    // const imageCode = document.createElement('p')
+    
+    // cell.appendChild(document.createTextNode(`${image.Code} ${image.Meta_Date}`)); 
+    cell.innerHTML=`<div id='sateliteID'><p>${image.Code} </p><p>${image.Meta_Date} </p> </div> `    
+
 
     // Создание обработчика события mouseover
     cell.addEventListener('mouseover', () => hoverAction(image));
@@ -302,6 +306,7 @@ function fillTableWithSatelliteImages(images) {
     let lastSelectedRow = null; // Для хранения последней выбранной строки
     document.getElementById('imagesTable').innerText = `For the period from ${inputStartDate} to ${inputEndDate}, ${images.length} images were found.`;
     images.forEach(image => {
+        console.log(image,'this is image inside table')
         let row = document.createElement('tr');
         row.setAttribute('id', `row-${image.Code}`);
         row.appendChild(createCheckboxCell(image));
