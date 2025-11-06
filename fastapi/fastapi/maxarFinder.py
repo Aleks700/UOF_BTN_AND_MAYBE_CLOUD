@@ -46,32 +46,50 @@ class MaxarFinder():
         except Exception as e:
             print(f"Ошибка при чтении SHP {srcShp}: {e}")
 
-    def insertXml(self, tifId: str, srcXml: str) -> None:
-        self.listOfDict[tifId]["srcXml"] = srcXml
-        
+    def insertShp(self, tifId: str, srcShp: str) -> None:
+        self.listOfDict[tifId]["srcShp"] = srcShp
+    
         try:
-            tree = ET.parse(srcXml)
-            root = tree.getroot()
+            gdf = gpd.read_file(srcShp)
+            
+            if len(gdf) == 0:
+                print(f"Пустой SHP: {srcShp}")
+                return
 
-            # --- Дата снимка ---
-            first_line_time = root.find('.//FIRSTLINETIME')
-            if first_line_time is not None:
-                dt = datetime.fromisoformat(first_line_time.text.replace('Z', '+00:00'))
-                self.listOfDict[tifId]["date"] = dt.strftime('%Y-%m-%d')
+            geom = gdf.geometry.iloc[0]
+            
+            # 1. Bounds (для fitBounds в Leaflet)
+            minx, miny, maxx, maxy = geom.bounds
+            self.listOfDict[tifId]["bounder"] = [minx, miny, maxx, maxy]
 
-            # --- Угол (off-nadir) ---
-            off_nadir = root.find('.//MEANOFFNADIRVIEWANGLE')
-            if off_nadir is not None:
-                self.listOfDict[tifId]["angle"] = float(off_nadir.text)
+            # 2. Центроид (для метки)
+            centroid = geom.centroid
+            self.listOfDict[tifId]["centroid"] = [centroid.x, centroid.y]
 
-            # --- Облачность ---
-            cloud_cover = root.find('.//CLOUDCOVER')
-            if cloud_cover is not None:
-                self.listOfDict[tifId]["cloud_cover"] = float(cloud_cover.text) * 100
+            # 3. WKT (для PostGIS)
+            self.listOfDict[tifId]["wkt"] = geom.wkt
+
+            # 4. Координаты вершин полигона → для Leaflet
+            if geom.geom_type == "Polygon":
+                # Exterior ring coordinates: [[lon, lat], ...]
+                exterior = list(geom.exterior.coords)
+                # Leaflet использует [lat, lon]!
+                leaflet_coords = [[lat, lon] for lon, lat in exterior]
+                self.listOfDict[tifId]["leaflet_polygon"] = leaflet_coords
+            else:
+                self.listOfDict[tifId]["leaflet_polygon"] = []
+
+            # 5. CRS
+            if gdf.crs:
+                self.listOfDict[tifId]["coordinate"] = gdf.crs.to_string()
+                # Также сохраним SRID для PostGIS
+                self.listOfDict[tifId]["srid"] = gdf.crs.to_epsg()
+            else:
+                self.listOfDict[tifId]["coordinate"] = "Unknown"
+                self.listOfDict[tifId]["srid"] = None
 
         except Exception as e:
-            print(f"Ошибка при парсинге XML {srcXml}: {e}")
-
+            print(f"Ошибка при чтении SHP {srcShp}: {e}")
     def findTiff(self, pathToSearch: str):
         for root, dirs, files in os.walk(pathToSearch):
             for file in files:
