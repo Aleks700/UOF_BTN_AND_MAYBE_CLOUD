@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: postgres_postgis
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
