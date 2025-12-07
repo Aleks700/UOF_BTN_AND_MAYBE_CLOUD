@@ -22,7 +22,7 @@ function searchCatalogForKmlKmz(options) {
     const { dateFrom, dateTo, west, east, south, north, satellites, angle } = options;
     // Формирование URL  
     const fullPath = path + dateFrom + "&DateTo=" + dateTo + "&West=" + west + "&East=" + east + "&South=" + south + "&North=" + north;
-   
+   console.log(fullPath,'full path')
     fetch(fullPath)
         .then(response => {
             if (!response.ok) {
@@ -117,6 +117,7 @@ function searchCatalog(options) {
     const { dateFrom, dateTo, west, east, south, north, satellites, angle, isNightImage} = options;
     // Формирование URL  
     const fullPath = path + dateFrom + "&DateTo=" + dateTo + "&West=" + west + "&East=" + east + "&South=" + south + "&North=" + north;
+    console.log(fullPath,'fullPath this is')
     fetch(fullPath)
         .then(response => {
             if (!response.ok) {
