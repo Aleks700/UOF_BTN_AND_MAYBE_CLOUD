@@ -12,43 +12,35 @@ class MaxarFinder():
     def insertTif(self, tifId: str, tifSrc: str) -> None:
         self.listOfDict[tifId]["srcTif"] = tifSrc
 
+    def insertXml(self, tifId: str, srcXml: str) -> None:
+        self.listOfDict[tifId]["srcXml"] = srcXml
+        
+        # Парсим XML и извлекаем нужные данные
+        try:
+            tree = ET.parse(srcXml)
+            root = tree.getroot()
+
+            # --- Дата снимка ---
+            first_line_time = root.find('.//FIRSTLINETIME')
+            if first_line_time is not None:
+                dt = datetime.fromisoformat(first_line_time.text.replace('Z', '+00:00'))
+                self.listOfDict[tifId]["date"] = dt.strftime('%Y-%m-%d')
+
+            # --- Угол (средний off-nadir) ---
+            off_nadir = root.find('.//MEANOFFNADIRVIEWANGLE')
+            if off_nadir is not None:
+                self.listOfDict[tifId]["angle"] = float(off_nadir.text)
+
+            # --- Облачность ---
+            cloud_cover = root.find('.//CLOUDCOVER')
+            if cloud_cover is not None:
+                self.listOfDict[tifId]["cloud_cover"] = float(cloud_cover.text) * 100  # в процентах
+
+        except Exception as e:
+            print(f"Ошибка при парсинге XML {srcXml}: {e}")
     def insertShp(self, tifId: str, srcShp: str) -> None:
         self.listOfDict[tifId]["srcShp"] = srcShp
         
-        try:
-            # Читаем шейп-файл
-            gdf = gpd.read_file(srcShp)
-            
-            if len(gdf) == 0:
-                print(f"Пустой SHP: {srcShp}")
-                return
-
-            # Предполагаем, что первый полигон — нужный
-            geom = gdf.geometry.iloc[0]
-            
-            # Ограничивающий прямоугольник
-            minx, miny, maxx, maxy = geom.bounds
-            self.listOfDict[tifId]["bounder"] = [minx, miny, maxx, maxy]
-
-            # Центроид
-            centroid = geom.centroid
-            self.listOfDict[tifId]["centroid"] = [centroid.x, centroid.y]
-
-            # WKT для PostGIS
-            self.listOfDict[tifId]["wkt"] = geom.wkt
-
-            # Определяем CRS (если есть .prj)
-            if gdf.crs:
-                self.listOfDict[tifId]["coordinate"] = gdf.crs.to_string()
-            else:
-                self.listOfDict[tifId]["coordinate"] = "Unknown"
-
-        except Exception as e:
-            print(f"Ошибка при чтении SHP {srcShp}: {e}")
-
-    def insertShp(self, tifId: str, srcShp: str) -> None:
-        self.listOfDict[tifId]["srcShp"] = srcShp
-    
         try:
             gdf = gpd.read_file(srcShp)
             
@@ -168,7 +160,7 @@ class MaxarFinder():
 
 # === Запуск ===
 data = MaxarFinder()
-data.findTiff(r'L:\MAXAR\Новая папка (2)')
+data.findTiff(r'D:\Maxar')
 data.showAll()
 
 # Пример SQL для PostGIS
