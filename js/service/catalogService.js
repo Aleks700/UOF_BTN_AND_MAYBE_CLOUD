@@ -6,7 +6,8 @@ import { coordinatesFromKmlKmz, geoJson } from "../buttonEvents.js";
 const imageDataArray = []
 let foundImage;
 
-var path = "http://10.0.6.117:8001/CatalogService?DateFr=" 
+// var path = "http://10.0.6.117:8001/CatalogService?DateFr="
+var path = "http://127.0.0.1:9000/catalog?DateFr="
 //var pat2 = "http://127.0.0.1:3000/" 
 // var path = "http://old-eo.gharysh.kz/CatalogService?DateFr="
 var path2 = "http://10.0.11.107:3000/" 
