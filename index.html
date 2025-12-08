@@ -89,12 +89,19 @@
                             <label for="perusat1">PeruSat-1</label>
                         </div>  -->
                     </div>
-                    
-                    <div class="angle-selection">
+                    <div style="display: flex;" >
+                           <div class="angle-selection">
                         <h6 class="filter-title">Incidence angle</h6>
                         <!-- Выбор угла снимка -->
                         <input type="number" id="angle" name="angle" min="0" max="45" step="1" value="45">
                     </div>
+                    <div class="cloud-selection">
+                        <h6 class="filter-title">Cloud angle</h6>
+                        <!-- Выбор угла снимка -->
+                        <input type="number" id="cloud" name="cloud" min="0" max="100" step="1" value="100">
+                    </div>
+                    </div>
+                 
                     <div>
                         <input type="checkbox" id="night_image" name="satellite" value="night_image">
                         <label for="night_image">Night image</label>

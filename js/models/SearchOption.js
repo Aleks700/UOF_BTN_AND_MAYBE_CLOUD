@@ -1,5 +1,5 @@
 export default class Options {
-    constructor(dateFrom, dateTo, west, east, south, north, satellites, angle, isNightImage) {
+    constructor(dateFrom, dateTo, west, east, south, north, satellites, angle, isNightImage,cloud) {
         this.dateFrom = dateFrom || "2024-01-01";
         this.dateTo = dateTo || "2024-01-02";
         this.west = west || 179.356737;
@@ -9,6 +9,7 @@ export default class Options {
         this.satellites = satellites || [];
         this.angle = angle || 0;
         this.isNightImage = isNightImage;
+        this.cloud = cloud
     }
 
     print() {

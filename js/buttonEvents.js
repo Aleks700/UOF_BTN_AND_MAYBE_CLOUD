@@ -23,6 +23,7 @@ function createTableForKmlKmz(coordinates){
     // Получаем угол
  
     const angle = parseInt(document.getElementById('angle').value); // для целого числа
+    const cloud = parseInt(document.getElementById('cloud').value); 
     const boundingBox = getBoundingBox(coordinates); 
     const searchOptions = {
         dateFrom: inputStartDate,
@@ -32,7 +33,8 @@ function createTableForKmlKmz(coordinates){
         south: boundingBox.west,
         north: boundingBox.south,
         satellites: selectedSatellites, // Пример спутников
-        angle: angle // Пример угла съемки
+        angle: angle, // Пример угла съемки,
+        cloud: cloud
     };
     searchCatalogForKmlKmz(searchOptions);
     removeLayerFromMap(QuicklookGroupLayer);

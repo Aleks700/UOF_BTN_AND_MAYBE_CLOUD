@@ -152,8 +152,9 @@ map.on('draw:created', function (e) {
 
     // Получаем угол
     const angle = parseInt(document.getElementById('angle').value); // для целого числа
+    const cloud = parseInt(document.getElementById('cloud').value); // для целого числа
     const isNightImage = document.getElementById('night_image').checked;
-    const option = new SearchOption(inputStartDate, inputEndDate, west, east, south, north, selectedSatellites, angle, isNightImage);
+    const option = new SearchOption(inputStartDate, inputEndDate, west, east, south, north, selectedSatellites, angle, isNightImage,cloud);
 
     searchCatalog(option)
 });
