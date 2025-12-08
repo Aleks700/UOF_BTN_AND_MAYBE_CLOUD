@@ -258,6 +258,7 @@ function openInfoBox(imageData) {
             content += "<p><strong>Pitch:</strong> " + imageData.Pitch + "</p>";
             content += "<p><strong>Roll:</strong> " + imageData.Roll + "</p>";
             content += "<p><strong>Incidence angle:</strong> " + imageData.IncidenceAngle + "</p>";
+            content+= "<p><strong>Incidence angle:</strong> " + imageData.Cloud_Coverage + "</p>";
         }
         // Если данные есть, заполняем всплывающее окно этими данными
         infoContent.innerHTML = content;
