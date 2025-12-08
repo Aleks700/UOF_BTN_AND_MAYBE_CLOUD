@@ -2,7 +2,7 @@ export default class SatelliteImage {
   constructor(data) {
     this.Code = data.Code || null;
     this.Coordinates = data.Coordinates || null;
-    this.Cloud = data.Cloud_Coverage ?? null;
+    this.Cloud = data.Cloud_Coverage || null;
     this.East = data.East || null;
     this.Meta_Date = data.Meta_Date || null;
     this.Metadata_Date = data.Metadata_Date || null;

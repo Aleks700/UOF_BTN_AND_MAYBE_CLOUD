@@ -331,7 +331,7 @@ function fillTableWithSatelliteImages(images) {
     "imagesTable"
   ).innerText = `For the period from ${inputStartDate} to ${inputEndDate}, ${images.length} images were found.`;
   images.forEach((image) => {
-    console.log(image, "this is image inside table");
+    // console.log(image, "this is image inside table");
     let row = document.createElement("tr");
     row.setAttribute("id", `row-${image.Code}`);
     row.appendChild(createCheckboxCell(image));

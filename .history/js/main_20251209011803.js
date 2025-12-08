@@ -191,7 +191,6 @@ function donwloadCover() {
 }
 
 function addInfoButtonToRow(row, image) {
-  console.log(image, "image row info ");
   let infoCell = document.createElement("td");
   let infoButton = document.createElement("button");
   infoButton.className = "info-button"; // Класс для стилизации кнопки, если необходимо

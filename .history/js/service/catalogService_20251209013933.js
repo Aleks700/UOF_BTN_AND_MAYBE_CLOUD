@@ -191,7 +191,7 @@ function searchCatalog(options) {
       filteredItems.forEach((item) => {
         console.log(item, "to filter");
         const satelliteImage = new SatelliteImage(item);
-        console.log(satelliteImage, "class data");
+        console.log(satelliteImage);
         if (
           satellites.some((satellite) => satellite === item.Satellite) &&
           item.IncidenceAngle <= angle

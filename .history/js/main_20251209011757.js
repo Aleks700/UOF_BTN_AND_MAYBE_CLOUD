@@ -191,7 +191,6 @@ function donwloadCover() {
 }
 
 function addInfoButtonToRow(row, image) {
-  console.log(image, "image row info ");
   let infoCell = document.createElement("td");
   let infoButton = document.createElement("button");
   infoButton.className = "info-button"; // Класс для стилизации кнопки, если необходимо
@@ -205,7 +204,7 @@ function addInfoButtonToRow(row, image) {
     //     row.classList.remove('highlighted'); // Удаляем класс подсветки
     //     // row.style.backgroundColor = ''; // Если были применены стили, то их можно убрать
     // });
-    console.log(image, "this image  data inside infobox");
+    console.log(image, "this image inside infobox");
     openInfoBox(image);
     // row.classList.add('highlighted'); // Добавляем класс подсветки к текущей строке
   });

@@ -90,7 +90,7 @@ function searchCatalogForKmlKmz(options) {
         if (b.Code > a.Code) return 1;
         return 0;
       });
-      console.log(imageDataArray, "this is imageDataArray");
+      console.log(imageDataArray);
       fillTableWithSatelliteImages(imageDataArray);
       hideLoadingOverlay();
     })
@@ -189,9 +189,7 @@ function searchCatalog(options) {
         : data.data;
 
       filteredItems.forEach((item) => {
-        console.log(item, "to filter");
         const satelliteImage = new SatelliteImage(item);
-        console.log(satelliteImage, "class data");
         if (
           satellites.some((satellite) => satellite === item.Satellite) &&
           item.IncidenceAngle <= angle
@@ -256,7 +254,6 @@ function searchCatalog(options) {
               const data = {
                 Code: item.data_strip_id,
                 Coordinates: `${item.sw_corner_latitude} ${item.sw_corner_longitude} ${item.se_corner_latitude} ${item.se_corner_longitude} ${item.ne_corner_latitude} ${item.ne_corner_longitude} ${item.nw_corner_latitude} ${item.nw_corner_longitude}`,
-                // Cloud_Coverage: item.Cloud_Coverage,
                 IncidenceAngle: item.incidence_angle,
                 Satellite: item.satellite_name,
                 Metadata_Date: item.acquisition_end_date.substring(0, 10),
@@ -273,7 +270,6 @@ function searchCatalog(options) {
               if (b.Code > a.Code) return 1;
               return 0;
             });
-            console.log(imageDataArray, "imageDataArray");
             fillTableWithSatelliteImages(imageDataArray);
             hideLoadingOverlay();
           })
