@@ -102,12 +102,13 @@ async def get_catalog(
     for item in data["data"]:
         print(item)
         # ✅ Берём ID без .jpeg
-        image_id = item["new_quicklook"].replace(".jpeg", "")
-        print(image_id,"this is image id")
-        print(image_id,"image id")
+        image_id = item["Code"]
+        # image_id = item["new_quicklook"].replace(".jpeg", "")
+        print(image_id,"this is image id\n")
+        print(image_id,"image id\n")
         # ✅ Получаем процент из Excel
-        cloud_value = cloud_dict.get(image_id)
-        print(cloud_value,"this cloud value")
+        cloud_value = cloud_dict.get(image_id+'_QL')
+        print(cloud_value,"this cloud value\n")
 
         # ✅ Если есть в Excel и проходит по лимиту
         if cloud_value ==None :
