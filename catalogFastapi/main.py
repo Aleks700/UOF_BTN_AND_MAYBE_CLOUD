@@ -25,7 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_URL = "http://10.0.6.117:8001/CatalogService"
+# BASE_URL = "http://10.0.6.117:8001/CatalogService"
+BASE_URL = "https://old-eo.gharysh.kz/CatalogService"
+
 
 
 
