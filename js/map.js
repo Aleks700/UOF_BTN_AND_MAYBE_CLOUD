@@ -13,7 +13,8 @@ const btnToogleSidebar = document.getElementById('toogle_all')
 const btnDownloadLines = document.getElementById('downloadLines')
 const btnSaveSelectedShape = document.getElementById('saveShapeLines')
 const selectedLayersListTable = document.getElementById('selected-layers-list-table')
-
+const cloudUpdateBtn = document.getElementById('update-cloud')
+let savedOptionToCloudRequest = null;
 
 btnRemoveAll.addEventListener('click', () => {
     removeAllLayers()
@@ -29,6 +30,10 @@ btnDownloadLines.addEventListener('click',()=>{
 
 btnSaveSelectedShape.addEventListener('click',()=>{
     downloadSelectedShape()
+})
+
+cloudUpdateBtn.addEventListener('click',()=>{
+    updateCloudRequest()
 })
 
 
@@ -155,12 +160,20 @@ map.on('draw:created', function (e) {
     const cloud = parseInt(document.getElementById('cloud').value); // для целого числа
     const isNightImage = document.getElementById('night_image').checked;
     const option = new SearchOption(inputStartDate, inputEndDate, west, east, south, north, selectedSatellites, angle, isNightImage,cloud);
-
+    savedOptionToCloudRequest = option
     searchCatalog(option)
 });
 
 
-
+function updateCloudRequest(){
+    const cloud = parseInt(document.getElementById('cloud').value); 
+    console.log(cloud,'from selector', savedOptionToCloudRequest.cloud,'savedCLoud')
+    if(savedOptionToCloudRequest && savedOptionToCloudRequest.cloud!== cloud){
+        savedOptionToCloudRequest.cloud = cloud
+        searchCatalog(savedOptionToCloudRequest)
+    }
+    
+}
 
 function addSelectedLayer() {
     console.log(selectedSidebar, 'this selected')
