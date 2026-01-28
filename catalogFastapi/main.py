@@ -5,6 +5,7 @@ from shapely.geometry import Polygon
 import tempfile
 import os
 import pandas as pd
+import requests
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Geo Catalog Proxy with KML Filter")
@@ -16,7 +17,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5501",
         "http://127.0.0.1:5501",
-             "http://localhost:5500",
+        "http://localhost:5500",
         "http://127.0.0.1:5500",
     ],
     allow_origin_regex=r"http://10\.\d+\.\d+\.\d+:\d+",
@@ -124,6 +125,39 @@ async def get_catalog(
     return {'data':filtered}
 
 
+
+@app.get('/catalog/ML_images')
+async def get_catalog_ML( DateFr: str = Query("2024-10-30"),
+    DateTo: str = Query("2024-11-08"),
+    West: float = Query("74.459002"),
+    East: float = Query("53.499767"),
+    South: float = Query("49.275218"),
+    North: float = Query("65.710996")):
+    params = {
+        "DateFr": DateFr,
+        "DateTo": DateTo,
+        "West": West,
+        "East": East,
+        "South": South,
+        "North": North,
+    }
+    async with httpx.AsyncClient(timeout=60) as client:
+        response = await client.get(BASE_URL, params=params)
+        data = response.json()
+        print(data)
+        images = data['data']
+        if(len(images)>0):
+           
+            for i in images:
+                with open(os.path.join('cloud_detection/input_images',i['new_quicklook']) ,mode='wb') as f:
+                    sendedImg = requests.get(i['Quicklook'],stream=True)
+                    sendedImg.raise_for_status()
+                    for chunk in  sendedImg.iter_content(1024):
+                        f.write(chunk)
+
+
+            
+        return data
 # ===========================
 # ✅ 2. ПРОКСИ + KML ФИЛЬТР
 # ===========================
