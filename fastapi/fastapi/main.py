@@ -20,7 +20,7 @@ async def startup():
     async with engine.begin() as conn:
         await conn.execute(text("SELECT 1"))
     print("✅ Connected to PostgreSQL (PostGIS)!")
-po
+
 
 @app.get("/")
 async def root():
